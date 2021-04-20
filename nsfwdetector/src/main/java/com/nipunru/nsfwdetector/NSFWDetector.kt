@@ -31,7 +31,7 @@ object NSFWDetector {
     fun isNSFW(
         bitmap: Bitmap,
         confidenceThreshold: Float = CONFIDENCE_THRESHOLD,
-        callback: (Boolean, Float, Bitmap) -> Unit
+        callback: NSFWCallback
     ) {
         var threshold = confidenceThreshold
 
@@ -45,29 +45,32 @@ object NSFWDetector {
                 when (label.text) {
                     LABEL_SFW -> {
                         if (label.confidence > threshold) {
-                            callback(true, label.confidence, bitmap)
+                            callback.fire(true, label.confidence, bitmap)
                         } else {
-                            callback(false, label.confidence, bitmap)
+                            callback.fire(false, label.confidence, bitmap)
                         }
                     }
                     LABEL_NSFW -> {
                         if (label.confidence < (1 - threshold)) {
-                            callback(true, label.confidence, bitmap)
+                            callback.fire(true, label.confidence, bitmap)
                         } else {
-                            callback(false, label.confidence, bitmap)
+                            callback.fire(false, label.confidence, bitmap)
                         }
                     }
                     else -> {
-                        callback(false, 0.0F, bitmap)
+                        callback.fire(false, 0.0F, bitmap)
                     }
                 }
             } catch (e: Exception) {
                 Log.e(TAG, e.localizedMessage ?: "NSFW Scan Error")
-                callback(false, 0.0F, bitmap)
+                callback.fire(false, 0.0F, bitmap)
             }
         }.addOnFailureListener { e ->
             Log.e(TAG, e.localizedMessage ?: "NSFW Scan Error")
-            callback(false, 0.0F, bitmap)
+            callback.fire(false, 0.0F, bitmap)
         }
+    }
+    interface NSFWCallback {
+        fun fire(b: Boolean, f: Float, bi: Bitmap): Unit
     }
 }
