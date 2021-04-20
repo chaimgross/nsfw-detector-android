@@ -15,11 +15,11 @@ object NSFWDetector {
     private const val CONFIDENCE_THRESHOLD: Float = 0.7F
 
     private val localModel = FirebaseAutoMLLocalModel.Builder()
-        .setAssetFilePath("automl/manifest.json")
-        .build()
+            .setAssetFilePath("automl/manifest.json")
+            .build()
 
     private val options =
-        FirebaseVisionOnDeviceAutoMLImageLabelerOptions.Builder(localModel).build()
+            FirebaseVisionOnDeviceAutoMLImageLabelerOptions.Builder(localModel).build()
     private val interpreter = FirebaseVision.getInstance().getOnDeviceAutoMLImageLabeler(options)
 
     /**
@@ -29,9 +29,9 @@ object NSFWDetector {
      * @return callback with isNSFW(Boolean), confidence(Float), and image(Bitmap)
      */
     fun isNSFW(
-        bitmap: Bitmap,
-        confidenceThreshold: Float = CONFIDENCE_THRESHOLD,
-        callback: NSFWCallback
+            bitmap: Bitmap,
+            confidenceThreshold: Float = CONFIDENCE_THRESHOLD,
+            callback: NSFWCallback
     ) {
         var threshold = confidenceThreshold
 
@@ -70,7 +70,7 @@ object NSFWDetector {
             callback.fire(false, 0.0F, bitmap)
         }
     }
-    interface NSFWCallback {
-        fun fire(b: Boolean, f: Float, bi: Bitmap): Unit
-    }
+}
+public interface NSFWCallback {
+    fun fire(b: Boolean, f: Float, bi: Bitmap): Unit
 }
